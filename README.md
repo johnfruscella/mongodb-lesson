@@ -1,0 +1,1 @@
+This mondgo demo folder will be for learning MongoDb
