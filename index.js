@@ -18,16 +18,27 @@ const courseSchema = new mongoose.Schema({
 //Making Model. Create schema, compile into model which gives a class. Create object based on Class
 //Classes, objects: objects are an instance of a Class. A class is a blueprint
 //Course, nodeCourse
+const Course = mongoose.model('Course', courseSchema); //Course is class, ergo Pascal naming convention
 async function createCourse() {
-    const Course = mongoose.model('Course', courseSchema); //Course is class, ergo Pascal naming convention
+
     const course = new Course({
-        name: 'Chemistry Course',
-        Author: 'Dawkins',
-        tags: ['atoms', 'inorganic'],
+        name: 'Physics Course',
+        author: 'Dawkins',
+        tags: ['velocity', 'matter'],
         isPublished: true
     });
 
     const result = await course.save();
     console.log(result);
 }
-createCourse();
+
+async function getCourses() {
+    const courses = await Course
+        .find({ isPublished: true })
+        .limit(10)
+        .sort({ name: 1 })  //sorts name is ascending order. -1 for descending
+        .select({ name: 1, tags: 1 });
+    console.log(courses);
+};
+
+getCourses();
