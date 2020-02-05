@@ -33,21 +33,20 @@ async function createCourse() {
 //createCourse();
 
 async function getCourses() {
-    //Comparison Operators: use $ in front to indicate use of operator (e.g. $gt)
-    // eq (equal)
-    // ne (not equal)
-    // gt (greater than or equal to)
-    // lt (less than)
-    // lte (less than or equal to)
-    // in
-    // nin (not in)
+        // Regular Expressions (Regex)
+
     const courses = await Course
-        //.find({ author: 'Mosh', isPublished: true })
-        //.find({ price: { $gte: 10, $lte: 20 } }) find course between 10 and 20
-        .find({ price: { $in: [10, 15,20] } }) // find course at value 10, 15, and 20
+        .find({ author: 'Mosh', isPublished: true })
+        // find authors that start with 'Mosh'
+        //.find({author: /^Mosh/})
+        // ends with Hamedani
+       // .find({author: /Hamedani$/i})
+        // contains Mosh anywhere in the string
+        //.find({author: /.*Mosh.*/}) //.* in front means 0 or more chars in front of regex pattern, .* at end means 0 or more at end.
         .limit(10)
         .sort({ name: 1 })  //1 sorts name is ascending order. -1 for descending
-        .select({ name: 1, tags: 1 });
+        //.select({ name: 1, tags: 1 });
+        .countDocuments(); // returns the number of documents in the database. countDocuments() replaces the deprecated count(). 
     console.log(courses);
 };
 
