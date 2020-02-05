@@ -30,24 +30,36 @@ async function createCourse() {
     const result = await course.save();
     console.log(result);
 }
-//createCourse();
+
 
 async function getCourses() {
-        // Regular Expressions (Regex)
+    const pageNumber = 2;
+    const pageSize = 10;
 
     const courses = await Course
         .find({ author: 'Mosh', isPublished: true })
-        // find authors that start with 'Mosh'
-        //.find({author: /^Mosh/})
-        // ends with Hamedani
-       // .find({author: /Hamedani$/i})
-        // contains Mosh anywhere in the string
-        //.find({author: /.*Mosh.*/}) //.* in front means 0 or more chars in front of regex pattern, .* at end means 0 or more at end.
-        .limit(10)
+        .skip((pageNumber - 1) * pageSize)
+        .limit(pageSize)
         .sort({ name: 1 })  //1 sorts name is ascending order. -1 for descending
-        //.select({ name: 1, tags: 1 });
-        .countDocuments(); // returns the number of documents in the database. countDocuments() replaces the deprecated count(). 
+        .select({ name: 1, tags: 1 });
+        //.countDocuments(); // returns the number of documents in the database. countDocuments() replaces the deprecated count(). 
     console.log(courses);
 };
 
-getCourses();
+async function updateCourse(id){
+    // First approach called Query first
+    // 1. findById()
+    // 2. Modify its properties
+    // save()
+    const course = await Course.findById(id);
+    if (!course) return;
+    course.isPublished = true;
+    course.author = 'Another Author';
+
+    const result = await course.save();
+    console.log(result);
+    
+}
+updateCourse('5e39f45001a7d31e0064dcc3');
+//getCourses();
+//createCourse();
