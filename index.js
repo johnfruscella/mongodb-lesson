@@ -47,16 +47,17 @@ async function getCourses() {
 };
 
 async function updateCourse(id){
-    // First approach called Query first
-    // 1. findById()
-    // 2. Modify its properties
-    // save()
-    const course = await Course.findById(id);
-    if (!course) return;
-    course.isPublished = true;
-    course.author = 'Another Author';
+// Second approach is Update first
+// update directly in database
+// Optionally: get the updated document
 
-    const result = await course.save();
+    const result = await Course.updateOne({_id: id}, { // NOTE: '.update' is deprecated use 'updateOne', updateMany, or bulkWrite instead
+        $set: {
+            author: 'Mosh',
+            isPublished: false
+        }
+    });
+
     console.log(result);
     
 }
