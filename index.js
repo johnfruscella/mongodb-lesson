@@ -9,11 +9,28 @@ mongoose.connect('mongodb://localhost/playground', object)
     .catch(err => console.error('Could not connect to that MongoDB...', err));
 
 const courseSchema = new mongoose.Schema({
-    name: { type: String, required: true },
+    name: { 
+        type: String, 
+        required: true,
+        minlength: 5,
+        maxlength: 255,
+       // match: /pattern/ 
+    }, // Validators specific to Strings: minLength, maxLength, match (regex), enum
+    category: {
+        type: String,
+        required: true,
+        enum: ['web', 'mobile', 'network']
+    },
     author: String,
     tags: [String],
     date: { type: Date, default: Date.now },
-    isPublished: Boolean
+    isPublished: Boolean,
+    price: {
+        type: Number,
+        required: function () {return this.isPublished},  //arrow functions don't have 'this' property so can't use here
+        min: 10,
+        max: 200
+    } //Validation specific to Numbers: min and max
 });
 //Making Model. Create schema, compile into model which gives a class. Create object based on Class
 //Classes, objects: objects are an instance of a Class. A class is a blueprint
@@ -22,18 +39,20 @@ const Course = mongoose.model('Course', courseSchema); //Course is class, ergo P
 
 async function createCourse() {
     const course = new Course({
-        //name: 'Angular Course',
+        name: 'Angular Course',
+        category: '-',
         author: 'Mosh',
         tags: ['angular', 'frontend'],
-        isPublished: true
-    });
+        isPublished: true,
+        price: 15
+    }); 
 
-    //try{
+    try{
     const result = await course.save();
     console.log(result);
-    //} catch (ex) { //ex is for exception
-    //     console.log(ex.message);
-    // };
+    } catch (ex) { //ex is for exception
+         console.log(ex.message);
+     };
 
 }
 
@@ -71,6 +90,6 @@ async function removeCourse(id) {
 
 }
 //updateCourse('5e39f45001a7d31e0064dcc3');
-removeCourse('5e39f45001a7d31e0064dcc3');
-getCourses();
-//createCourse();
+//removeCourse('5e39f45001a7d31e0064dcc3');
+//getCourses();
+createCourse();
