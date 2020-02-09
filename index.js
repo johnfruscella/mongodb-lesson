@@ -9,12 +9,12 @@ mongoose.connect('mongodb://localhost/playground', object)
     .catch(err => console.error('Could not connect to that MongoDB...', err));
 
 const courseSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
+    name: {
+        type: String,
         required: true,
         minlength: 5,
         maxlength: 255,
-       // match: /pattern/ 
+        // match: /pattern/ 
     }, // Validators specific to Strings: minLength, maxLength, match (regex), enum
     category: {
         type: String,
@@ -22,12 +22,27 @@ const courseSchema = new mongoose.Schema({
         enum: ['web', 'mobile', 'network']
     },
     author: String,
-    tags: [String],
+    tags: {
+        type: Array,
+        validate: {
+            isAsync: true,
+            validator: function (v, callback) {
+                setTimeout(() => {
+                    // Do some async work
+                    const result = v && v.length > 0;
+                    callback(result);
+                }, 4000)    
+                // return v && v.length > 0; //prevents null value being passed in tags array
+            },
+            message: 'A course should have at least one tag.'
+        }
+
+    },
     date: { type: Date, default: Date.now },
     isPublished: Boolean,
     price: {
         type: Number,
-        required: function () {return this.isPublished},  //arrow functions don't have 'this' property so can't use here
+        required: function () { return this.isPublished },  //arrow functions don't have 'this' property so can't use here
         min: 10,
         max: 200
     } //Validation specific to Numbers: min and max
@@ -40,19 +55,19 @@ const Course = mongoose.model('Course', courseSchema); //Course is class, ergo P
 async function createCourse() {
     const course = new Course({
         name: 'Angular Course',
-        category: '-',
+        category: 'web',
         author: 'Mosh',
-        tags: ['angular', 'frontend'],
+        // tags: [],
         isPublished: true,
         price: 15
-    }); 
+    });
 
-    try{
-    const result = await course.save();
-    console.log(result);
+    try {
+        const result = await course.save();
+        console.log(result);
     } catch (ex) { //ex is for exception
-         console.log(ex.message);
-     };
+        console.log(ex.message);
+    };
 
 }
 
