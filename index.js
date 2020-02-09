@@ -31,7 +31,7 @@ const courseSchema = new mongoose.Schema({
                     // Do some async work
                     const result = v && v.length > 0;
                     callback(result);
-                }, 4000)    
+                }, 4000)
                 // return v && v.length > 0; //prevents null value being passed in tags array
             },
             message: 'A course should have at least one tag.'
@@ -57,7 +57,7 @@ async function createCourse() {
         name: 'Angular Course',
         category: 'web',
         author: 'Mosh',
-        // tags: [],
+        tags: [],
         isPublished: true,
         price: 15
     });
@@ -66,7 +66,8 @@ async function createCourse() {
         const result = await course.save();
         console.log(result);
     } catch (ex) { //ex is for exception
-        console.log(ex.message);
+        for (field in ex.errors)
+            console.log(ex.error[field].message);
     };
 
 }
